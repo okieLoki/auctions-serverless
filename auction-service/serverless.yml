@@ -1,0 +1,17 @@
+service: auction-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 256
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+
+functions:
+  createAuction:
+    handler: src/handlers/createAuction.handler
+    events:
+      - httpApi:
+          path: /auction
+          method: POST
