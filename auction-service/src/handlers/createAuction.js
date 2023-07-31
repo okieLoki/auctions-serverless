@@ -1,9 +1,6 @@
-const { v4: uuid} = require('uuid')
+const { v4: uuid } = require('uuid')
 const AWS = require('aws-sdk')
-const middy = require('@middy/core')
-const httpJsonBodyParser = require('@middy/http-json-body-parser')
-const httpErrorHandler = require('@middy/http-error-handler')
-const httpEventNormalizer = require('@middy/http-event-normalizer')
+const commonMiddleware = require('../lib/commonMiddleware')
 const createError = require('http-errors')
 
 const dynamodb = new AWS.DynamoDB.DocumentClient()
@@ -18,6 +15,9 @@ const createAuction = async (event) => {
     title,
     status: 'OPEN',
     createdAt: now.toISOString(),
+    highestBid: {
+      amount: 0,
+    }
   }
 
   try {
@@ -36,8 +36,4 @@ const createAuction = async (event) => {
   };
 };
 
-module.exports.handler = middy(createAuction)
-  .use(httpJsonBodyParser())
-  .use(httpEventNormalizer())
-  .use(httpErrorHandler())
-
+module.exports.handler = commonMiddleware(createAuction)
