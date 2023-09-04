@@ -1,5 +1,5 @@
 service: auction-service
-frameworkVersion: '3'
+frameworkVersion: "3"
 
 provider:
   name: aws
@@ -12,15 +12,13 @@ provider:
   iam:
     role:
       statements:
-      - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
+        - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
 
 resources:
   Resources:
     AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
-        
 
 functions:
-
   createAuction:
     handler: src/handlers/createAuction.handler
     events:
@@ -28,29 +26,33 @@ functions:
           path: /auction
           method: POST
 
-  getAuctions: 
+  getAuctions:
     handler: src/handlers/getAuctions.handler
     events:
       - httpApi:
           path: /auctions
           method: GET
 
-  getAuction: 
+  getAuction:
     handler: src/handlers/getAuction.handler
     events:
       - httpApi:
           path: /auction/{id}
           method: GET
 
-  placeBid: 
+  placeBid:
     handler: src/handlers/placeBid.handler
     events:
       - httpApi:
           path: /auction/{id}/bid
           method: PATCH
-  
 
-custom: 
+  processAuctions:
+    handler: src/handlers/processAuctions.handler
+    # events:
+    #   - schedule: cron(0/1 * * * ? *)
+
+custom:
   AuctionsTable:
     name: !Ref AuctionsTable
     arn: !GetAtt AuctionsTable.Arn
