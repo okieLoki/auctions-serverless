@@ -4,11 +4,11 @@ const httpEventNormaliser = require("@middy/http-event-normalizer");
 const httpErrorHandler = require("@middy/http-error-handler");
 
 function createMiddlewareWrappedHandler(handlerFunction) {
-    return middy(handlerFunction).use([
-      httpErrorHandler(),
-      httpEventNormaliser(),
-      httpJsonBodyParser(),
-    ]);
-  }
-  
-  module.exports = createMiddlewareWrappedHandler;
+  return middy(handlerFunction).use([
+    httpErrorHandler(),
+    httpEventNormaliser(),
+    httpJsonBodyParser(),
+  ]);
+}
+
+module.exports = createMiddlewareWrappedHandler;
