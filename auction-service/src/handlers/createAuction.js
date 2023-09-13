@@ -2,6 +2,9 @@ const { v4: uuid } = require('uuid')
 const AWS = require('aws-sdk')
 const commonMiddleware = require('../lib/commonMiddleware')
 const createError = require('http-errors')
+const validator = require('@middy/validator')
+const createAuctionSchema = require('../lib/schemas/createAuctionSchema')
+const { transpileSchema } = require('@middy/validator/transpile')
 
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
@@ -40,3 +43,12 @@ const createAuction = async (event) => {
 };
 
 module.exports.handler = commonMiddleware(createAuction)
+  .use(
+    validator({
+      eventSchema: transpileSchema(createAuctionSchema),
+      ajvOptions: {
+        useDefaults: true,
+        strict: false,
+      }
+    })
+  )
