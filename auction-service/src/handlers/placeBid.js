@@ -15,6 +15,14 @@ const placeBid = async (event) => {
 
     const auction = await getAuctionById(id)
 
+    if(email === auction.seller){
+        throw new createError.Forbidden('You cannot bid on your own auctions!')
+    }
+
+    if(email === auction.highestBid.bidder){
+        throw new createError.Forbidden('You are already the highest bidder!')
+    }
+
     if(amount <= auction.highestBid.amount){
         throw new createError.Forbidden(`Your bid must be higher than ${auction.highestBid.amount}`)
     }

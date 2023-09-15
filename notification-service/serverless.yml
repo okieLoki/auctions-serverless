@@ -1,0 +1,17 @@
+service: notification-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 256
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  iam:
+    role:
+      statements:
+        - ${file(iam/sendMailIAM.yml):SendMailIAM}
+
+functions:
+  sendMail: 
+    handler: src/handlers/sendMail.handler
