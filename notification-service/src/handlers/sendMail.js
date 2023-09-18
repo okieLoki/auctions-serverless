@@ -4,7 +4,7 @@ const ses = new AWS.SES({ region: 'us-east-1' })
 
 const sendMail = async (event) => {
 
-    const record = event.Record[0];
+    const record = event.Records[0];
     
     const email = JSON.parse(record.body)
     const {subject, body, recipient} = email
@@ -38,3 +38,4 @@ const sendMail = async (event) => {
 
 
 module.exports.handler = sendMail
+

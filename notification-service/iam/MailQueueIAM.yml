@@ -3,3 +3,4 @@ MailQueueIAM:
   Action: 
     - sqs:ReceiveMessage
   Resources: ${self:custom.mailQueue.arn}
+
