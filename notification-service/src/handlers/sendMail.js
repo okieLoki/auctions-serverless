@@ -7,7 +7,7 @@ const sendMail = async (event) => {
     const params = {
         Source: 'testuddeepta@gmail.com',
         Destination: {
-            ToAddresses: ['uddeeptaraajkashyap@gmail.com']
+            ToAddresses: ['uddeepta12@gmail.com']
         },
         Message: {
             Body: {
@@ -31,6 +31,5 @@ const sendMail = async (event) => {
     }
 }
 
-sendMail()
 
 module.exports.handler = sendMail
