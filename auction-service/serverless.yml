@@ -9,6 +9,7 @@ provider:
   region: us-east-1
   environment:
     AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
+    MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
   httpApi:
     authorizers:
       customAuthorizer:
@@ -18,7 +19,7 @@ provider:
     role:
       statements:
         - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
-
+        - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
 resources:
   Resources:
     AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
@@ -63,11 +64,13 @@ functions:
   processAuctions:
     handler: src/handlers/processAuctions.handler
     # events:
-    #   - schedule: cron(0/1 * * * ? *)
+    #   - schedule: rate(1 minute)
 
 custom:
   authorizer: arn:aws:lambda:${aws:region}:${aws:accountId}:function:auth-service-${self:provider.stage}-auth
   AuctionsTable:
     name: !Ref AuctionsTable
     arn: !GetAtt AuctionsTable.Arn
-
+  MailQueue: 
+    arn: ${cf:notification-service-${self:provider.stage}.MailQueueArn}
+    url: ${cf:notification-service-${self:provider.stage}.MailQueueUrl}
