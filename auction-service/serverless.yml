@@ -1,5 +1,5 @@
 service: auction-service
-frameworkVersion: "3"
+frameworkVersion: "3.3"
 
 provider:
   name: aws
@@ -8,7 +8,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   environment:
-    AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
+    AUCTIONS_TABLE_NAM9arn E: ${self:custom.AuctionsTable.name}
     MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
   httpApi:
     authorizers:
