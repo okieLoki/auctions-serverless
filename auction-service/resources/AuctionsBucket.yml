@@ -5,6 +5,11 @@ AuctionsBucket:
             BlockPublicPolicy: false
             RestrictPublicBuckets: false
         BucketName: ${self:custom.AuctionsBucket.name}
+        LifeCycleConfiguration:
+            Rules:
+                - Id: ExpireOldPictures
+                  ExpirationInDays: 5
+                  Status: Enabled
 
 AuctionsBucketPolicy:
     Type: AWS::S3::BucketPolicy
