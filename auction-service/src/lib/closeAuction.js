@@ -1,7 +1,4 @@
 const AWS = require('aws-sdk');
-const buyerEmailTemplate = require('../templates/buyerEmailTemplate');
-const sellerEmailTemplate = require('../templates/sellerEmailTemplate');
-const noBidsEmailTemplate = require('../templates/noBidsEmailTemplate')
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const sqs = new AWS.SQS();
@@ -26,14 +23,14 @@ const closeAuction = async(auction) => {
 
     const { title, seller, highestBid } = auction;
     const { amount, bidder } = highestBid;
-
+    
     if (amount === 0) {
         await sqs.sendMessage({
             QueueUrl: process.env.MAIL_QUEUE_URL,
             MessageBody: JSON.stringify({
                 subject: 'No bids on your auction item :(',
                 recipient: seller,
-                body: noBidsEmailTemplate(title, seller),
+                body: `Oh no! Your item "${title}" didn't get any bids. Better luck next time!`
             })
         }).promise();
         return;
@@ -44,7 +41,7 @@ const closeAuction = async(auction) => {
         MessageBody: JSON.stringify({
             subject: 'Your item has been sold!',
             recipient: seller,
-            body: sellerEmailTemplate(title, amount, seller),
+            body: `Wohoo! Your item "${title}" has been sold for $${amount}`
         })
     }).promise();
 
@@ -53,7 +50,7 @@ const closeAuction = async(auction) => {
         MessageBody: JSON.stringify({
             subject: 'You won an auction!',
             recipient: bidder,
-            body: buyerEmailTemplate(title, amount, bidder),
+            body: `What a great deal! You got yourself a "${title}" for $${amount}`
         })
     }).promise();
     

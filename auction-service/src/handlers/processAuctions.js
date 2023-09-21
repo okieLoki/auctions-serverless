@@ -1,4 +1,4 @@
-const {createError} = require('http-errors')
+const { createError } = require('http-errors')
 const getEndedAuctions = require('../lib/getEndedAuctions')
 const closeAuction = require('../lib/closeAuction')
 
@@ -12,7 +12,13 @@ const processAuctions = async (event) => {
 
         await Promise.all(closePromises)
 
-        return { closed: closePromises.length }
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'Auctions closed successfully',
+                closed: closePromises.length
+            })
+        }
     } catch (error) {
 
         console.error(error)
