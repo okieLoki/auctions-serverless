@@ -15,6 +15,12 @@ const uploadAuctionPicture = async (event) => {
         const b64 = event.body.replace(/^data:image\/\w+;base64,/, '');
         const buffer = Buffer.from(b64, 'base64');
 
+        const {email} = event.requestContext.authorizer;
+
+        if(email != auction.seller) {
+            throw new createError.Forbidden(`You are not the seller of this auction!`);
+        }
+
         const uploadToS3Result = await uploadPictureToS3(auction.id + '.jpg', buffer);
 
         const updatedAuction = await dynamodb.update({
