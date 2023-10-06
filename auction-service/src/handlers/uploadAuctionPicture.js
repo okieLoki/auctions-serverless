@@ -1,9 +1,12 @@
 const uploadPictureToS3 = require('../lib/uploadPictureToS3');
 const createError = require('http-errors');
 const middy = require('@middy/core');
-const httpErrorHandler = require('@middy/http-error-handler');
 const { getAuctionById } = require('./getAuction');
 const AWS = require('aws-sdk');
+const validator = require('@middy/validator');
+const { transpileSchema } = require('@middy/validator/transpile');
+const uploadAuctionPictureSchema = require('../lib/schemas/uploadAuctionPictureSchema');
+const commonMiddleware = require('../lib/commonMiddleware');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
@@ -15,9 +18,9 @@ const uploadAuctionPicture = async (event) => {
         const b64 = event.body.replace(/^data:image\/\w+;base64,/, '');
         const buffer = Buffer.from(b64, 'base64');
 
-        const {email} = event.requestContext.authorizer;
+        const { email } = event.requestContext.authorizer;
 
-        if(email != auction.seller) {
+        if (email != auction.seller) {
             throw new createError.Forbidden(`You are not the seller of this auction!`);
         }
 
@@ -43,4 +46,13 @@ const uploadAuctionPicture = async (event) => {
     }
 };
 
-module.exports.handler = middy(uploadAuctionPicture).use(httpErrorHandler());
+module.exports.handler = commonMiddleware(uploadAuctionPicture)
+    .use(
+        validator({
+            eventSchema: transpileSchema(uploadAuctionPictureSchema),
+            ajvOptions: {
+                useDefaults: true,
+                strict: false
+            }
+        })
+    )
